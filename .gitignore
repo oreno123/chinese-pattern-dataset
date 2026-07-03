@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Data (large files via git-lfs or external storage)
+data/raw/
+data/exports/
+*.glb
+*.obj
+
+# DB transient files
+db/*.db-journal
+db/*.db-wal
+db/*.db-shm
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
