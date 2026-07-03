@@ -300,25 +300,17 @@ ELEMENT_TO_PATTERN = {
 
 
 def migrate_elements(db_path: Path) -> int:
-    """Migrate 60 elements from manifest.json."""
+    """Migrate 60 elements from manifest.json.
+
+    Elements are derived from parent patterns, so no separate source row is added;
+    their provenance traces through elements.pattern_id -> patterns.source_id.
+    """
     manifest = json.loads(MANIFEST_JSON.read_text(encoding="utf-8"))
     approved = json.loads(APPROVED_JSON.read_text(encoding="utf-8"))
     approved_set = set(approved) if isinstance(approved, list) else set()
 
     count = 0
     with get_conn(db_path) as conn:
-        insert_source(
-            conn,
-            {
-                "source_id": "wenmai-elements",
-                "source_type": "manual",
-                "license": "CC-BY-NC",
-                "license_url": None,
-                "fetched_at": "2026-07-04T00:00:00Z",
-                "api_response": {"total": manifest.get("total")},
-                "notes": "Extracted motifs from wenmai elements pipeline (DBSCAN v1)",
-            },
-        )
         for source_name, items in manifest.get("bySource", {}).items():
             for entry in items:
                 elem_id = entry["id"]
