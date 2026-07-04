@@ -31,7 +31,13 @@ from scripts.vectorize import png_to_svg
 
 API_KEY = "sk-EHGrh8ZDedZv8UBt96B2Cd2678754c77Ae012c255311Fd59"
 API_BASE = "https://api.openai-next.com/v1"
-MODEL = "gemini-3-pro-image-preview"
+
+# Multiple working models for diversity + fault tolerance
+MODELS = [
+    "gemini-3-pro-image-preview",
+    "gemini-2.5-flash-image",
+    "gemini-3.1-flash-image-preview",
+]
 
 DATASET_ROOT = Path("D:/desktop/pattern-dataset")
 
@@ -54,87 +60,143 @@ PATTERN_TYPES = {
     "shanshui": ("山水纹", "landscape"),
 }
 
-# Purpose-specific prompt templates
+# Purpose-specific prompt templates — multiple variants per purpose for diversity
 PROMPT_TEMPLATES = {
-    "element": (
+    "element": [
         "A traditional Chinese {zh} ({en}) decorative element, isolated on pure white background, "
         "blue-and-white porcelain cobalt-blue line-art style, single complete motif, "
         "intricate hand-drawn linework, symmetrical, Ming dynasty aesthetic, "
-        "no text, no watermark, no border, centered composition, NO color fill, line art only."
-    ),
-    "element-corner": (
-        "A traditional Chinese {zh} ({en}) corner ornament, L-shaped quarter-symmetry design, "
-        "fills the top-left corner of a square, mirror-symmetric along the diagonal, "
-        "blue-and-white porcelain cobalt-blue line-art on pure white background, "
-        "Ming dynasty aesthetic, NO color fill, line art only, no text."
-    ),
-    "element-filler": (
-        "A small traditional Chinese {zh} ({en}) filler motif, single small unit suitable for "
-        "tessellation, perfectly square composition, blue-and-white porcelain cobalt-blue "
-        "line-art on pure white background, simple but elegant, Ming dynasty aesthetic, "
-        "NO color fill, line art only, no text."
-    ),
-    "element-border": (
-        "A horizontal traditional Chinese {zh} ({en}) border strip, repeating along the long axis, "
-        "thin ribbon composition (height = 1/4 of width), blue-and-white porcelain cobalt-blue "
-        "line-art on pure white background, Ming dynasty aesthetic, NO color fill, line art only."
-    ),
-    "tile": (
-        "A seamless repeating pattern of traditional Chinese {zh} ({en}), "
-        "blue-and-white porcelain cobalt-blue line-art on warm cream paper background, "
-        "intricate hand-drawn linework, museum textile catalog style, "
-        "fills entire frame edge-to-edge, Ming dynasty aesthetic, line art only, no text."
-    ),
-    "hero": (
-        "A museum-quality hero photograph of a traditional Chinese {zh} ({en}) on "
-        "an imperial Ming-dynasty porcelain vase, dramatic soft studio lighting, "
-        "deep cobalt-blue underglaze on white porcelain, ultra-detailed, "
-        "shown at three-quarter angle, professional cultural heritage photography, "
-        "warm gallery background, no text, no watermark."
-    ),
+        "no text, no watermark, no border, centered composition, line art only.",
+
+        "A single Chinese {zh} ({en}) motif, court-art style, Yuan dynasty aesthetic, "
+        "thick confident brushstrokes, pure cobalt-blue on warm cream paper, "
+        "isolated and centered, museum specimen plate quality, line art only, no fill, no text.",
+
+        "A delicate Chinese {zh} ({en}) pattern, Qing dynasty imperial porcelain style, "
+        "fine elegant linework, soft underglaze blue on rice-paper white background, "
+        "asymmetric naturalistic composition, intricate detail, line art only, no fill.",
+
+        "A bold geometric Chinese {zh} ({en}) design, Song dynasty minimalist aesthetic, "
+        "strong contrast, pure indigo-blue linework on pure white, "
+        "centered single motif, museum catalog specimen, line art only.",
+    ],
+    "element-corner": [
+        "A traditional Chinese {zh} ({en}) corner ornament, L-shaped quarter design filling "
+        "the top-left corner, mirror-symmetric along the diagonal, cobalt-blue line-art "
+        "on pure white background, Ming dynasty, line art only, no fill, no text.",
+
+        "An ornate Chinese {zh} ({en}) corner flourish, baroque Qing-dynasty style, "
+        "densely detailed, fills upper-left quadrant with diagonal symmetry, "
+        "warm gold-outline variant on cream paper, line art only.",
+
+        "A minimalist Chinese {zh} ({en}) corner bracket, Song-dynasty geometric, "
+        "clean L-shaped, mirror-symmetric on diagonal, cobalt blue line on white, "
+        "line art only.",
+    ],
+    "element-filler": [
+        "A small Chinese {zh} ({en}) filler motif for tessellation, single small square unit, "
+        "simple but elegant, blue-and-white cobalt line-art on pure white background, "
+        "Ming dynasty, line art only, no fill, no text.",
+
+        "A tiny repeatable Chinese {zh} ({en}) tile, embroidered silk textile style, "
+        "Qing dynasty, single small unit, fine thread-like linework, "
+        "line art only on cream paper background.",
+
+        "A geometric Chinese {zh} ({en}) filler unit, Song-dynasty ceramic tile style, "
+        "small square, bold cobalt linework on white, perfectly tessellates, line art only.",
+    ],
+    "element-border": [
+        "A horizontal Chinese {zh} ({en}) border strip, repeating along the long axis, "
+        "thin ribbon (height = 1/4 width), cobalt-blue line-art on pure white background, "
+        "Ming dynasty, line art only, no fill, no text.",
+
+        "A vertical-edge Chinese {zh} ({en}) border, Qing dynasty intricate style, "
+        "tall thin column (width = 1/4 height), fine linework, line art only.",
+
+        "A wraparound Chinese {zh} ({en}) frieze, Yuan dynasty bold style, "
+        "horizontal strip with central repeating unit, strong contrast cobalt-on-cream, "
+        "line art only.",
+    ],
+    "tile": [
+        "A seamless repeating pattern of Chinese {zh} ({en}), blue-and-white porcelain cobalt "
+        "line-art on warm cream paper, museum textile catalog style, fills entire frame, "
+        "Ming dynasty, line art only, no text.",
+
+        "An all-over Chinese {zh} ({en}) textile pattern, silk embroidery style, Qing dynasty, "
+        "fine detailed thread-work in cobalt blue on cream, fills entire frame edge-to-edge, "
+        "no border, no text.",
+
+        "A geometric tessellation of Chinese {zh} ({en}), Song dynasty ceramic-tile aesthetic, "
+        "bold indigo linework on white, perfectly seamless repeat, fills entire frame.",
+    ],
+    "hero": [
+        "A museum-quality hero photograph of a Chinese {zh} ({en}) on an imperial Ming-dynasty "
+        "porcelain vase, dramatic soft studio lighting, deep cobalt-blue underglaze on white "
+        "porcelain, ultra-detailed, three-quarter angle, professional cultural heritage photography, "
+        "warm gallery background, no text.",
+
+        "A close-up hero shot of a Chinese {zh} ({en}) on a Qing imperial silk panel, "
+        "soft museum lighting, golden thread on imperial yellow silk, intricate detail, "
+        "professional cultural heritage photography, no text.",
+
+        "A hero photograph of a Chinese {zh} ({en}) on a Tang-dynasty bronze mirror, "
+        "polished metal surface with patina, dramatic side lighting, museum specimen quality, "
+        "dark background, no text.",
+    ],
 }
 
 
-def generate_one(client: httpx.Client, prompt: str, dest: Path) -> tuple[bool, str]:
-    """Generate one image. Returns (success, msg)."""
-    try:
-        r = client.post(
-            f"{API_BASE}/images/generations",
-            headers={
-                "Authorization": f"Bearer {API_KEY}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": MODEL,
-                "prompt": prompt,
-                "n": 1,
-                "size": "1024x1024",
-            },
-            timeout=180,
-        )
-    except Exception as e:
-        return False, f"req error: {e}"
-
-    if r.status_code != 200:
-        return False, f"http {r.status_code}: {r.text[:200]}"
-
-    items = r.json().get("data") or []
-    if not items:
-        return False, "no data"
-    item = items[0]
-    if "b64_json" in item:
-        img = base64.b64decode(item["b64_json"])
-    elif "url" in item:
+def generate_one(client: httpx.Client, prompt: str, dest: Path, model: str | None = None) -> tuple[bool, str, str | None]:
+    """Generate one image. Returns (success, msg, model_used)."""
+    # Try specified model first, then fallback through the rest
+    models_to_try = [model] if model else []
+    models_to_try += [m for m in MODELS if m not in models_to_try]
+    last_err = ""
+    for m in models_to_try:
         try:
-            img = httpx.get(item["url"], timeout=60).content
+            r = client.post(
+                f"{API_BASE}/images/generations",
+                headers={
+                    "Authorization": f"Bearer {API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": m,
+                    "prompt": prompt,
+                    "n": 1,
+                    "size": "1024x1024",
+                },
+                timeout=180,
+            )
         except Exception as e:
-            return False, f"url dl err: {e}"
-    else:
-        return False, f"unknown format: {list(item.keys())}"
+            last_err = f"{m}: req {e}"
+            continue
 
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_bytes(img)
-    return True, f"{len(img)} bytes"
+        if r.status_code != 200:
+            last_err = f"{m}: http {r.status_code}"
+            continue
+
+        items = r.json().get("data") or []
+        if not items:
+            last_err = f"{m}: no data"
+            continue
+        item = items[0]
+        if "b64_json" in item:
+            img = base64.b64decode(item["b64_json"])
+        elif "url" in item:
+            try:
+                img = httpx.get(item["url"], timeout=60).content
+            except Exception as e:
+                last_err = f"{m}: url dl {e}"
+                continue
+        else:
+            last_err = f"{m}: unknown format"
+            continue
+
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(img)
+        return True, f"{len(img)} bytes", m
+    return False, last_err, None
 
 
 def compute_sha256(p: Path) -> str:
@@ -159,14 +221,16 @@ def main() -> None:
     parser.add_argument("--count", type=int, default=1, help="how many per type")
     parser.add_argument("--vectorize", action="store_true", help="also vectorize to SVG")
     parser.add_argument("--db-path", type=Path, default=DB_PATH)
+    parser.add_argument("--model", help="pin to specific model (default: rotate)")
+    parser.add_argument("--concurrency", type=int, default=1, help="parallel workers (default 1; safe=3)")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
     types = [args.type] if args.type else list(PATTERN_TYPES.keys())
-    template = PROMPT_TEMPLATES[args.purpose]
+    templates = PROMPT_TEMPLATES[args.purpose]
     out_dir = DATASET_ROOT / f"data/patterns/ai-{args.purpose}"
     out_dir.mkdir(parents=True, exist_ok=True)
-    source_id = f"ai-gemini3-{args.purpose}"
+    source_id = f"ai-multi-{args.purpose}"
 
     client = httpx.Client(timeout=200)
 
@@ -181,46 +245,60 @@ def main() -> None:
                 "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 "api_response": {
                     "endpoint": f"{API_BASE}/images/generations",
-                    "model": MODEL,
+                    "models": MODELS,
                     "purpose": args.purpose,
                 },
-                "notes": f"AI-generated {args.purpose} via Gemini 3 Pro Image. Excluded from LoRA training set.",
+                "notes": f"AI-generated {args.purpose} via multi-model rotation. Excluded from LoRA training set.",
             },
         )
 
-    total = 0
-    failed = 0
+    # Build task list: (type_key, i, prompt, model_hint, dest)
+    tasks: list[tuple[str, int, str, str, Path]] = []
     for type_key in types:
         if type_key not in PATTERN_TYPES:
             print(f"[skip] unknown type: {type_key}")
             continue
         zh, en = PATTERN_TYPES[type_key]
-        prompt = template.format(zh=zh, en=en)
         for i in range(args.count):
-            short = hashlib.md5(f"{type_key}-{i}-{time.time()}".encode()).hexdigest()[:8]
+            template = templates[i % len(templates)]
+            prompt = template.format(zh=zh, en=en)
+            model_hint = MODELS[i % len(MODELS)] if not args.model else args.model
+            short = hashlib.md5(f"{type_key}-{i}-{time.time()}-{os.getpid()}".encode()).hexdigest()[:8]
             dest = out_dir / f"{type_key}-{i:02d}-{short}.png"
-            print(f"[gen] {type_key}#{i} ({zh})...")
-            ok, msg = generate_one(client, prompt, dest)
-            if not ok:
-                print(f"  [err] {msg}")
-                failed += 1
-                time.sleep(2)
-                continue
+            tasks.append((type_key, i, prompt, model_hint, dest))
 
+    import threading
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    lock = threading.Lock()
+    total = 0
+    failed = 0
+
+    def process(task):
+        nonlocal total, failed
+        type_key, i, prompt, model_hint, dest = task
+        zh, en = PATTERN_TYPES[type_key]
+        print(f"[gen] {type_key}#{i} ({zh}) [model={model_hint}]...")
+        ok, msg, model_used = generate_one(client, prompt, dest, model=model_hint)
+        if not ok:
+            print(f"  [err] {type_key}#{i} {msg}")
+            with lock:
+                failed += 1
+            return
+        # Vectorize + DB insert under lock (potrace + sqlite are not thread-safe)
+        with lock:
             sha = compute_sha256(dest)
             try:
                 with Image.open(dest) as img:
                     w, h = img.size
             except Exception:
                 w, h = None, None
-
             vector_path = None
             if args.vectorize and args.purpose.startswith("element"):
                 svg = dest.with_suffix(".svg")
                 v_ok, _ = png_to_svg(dest, svg, threshold=180)
                 if v_ok:
                     vector_path = str(svg.relative_to(DATASET_ROOT)).replace("\\", "/")
-
+            short = dest.stem.split("-")[-1]
             pattern_id = f"ai-{args.purpose}-{type_key}-{i:02d}-{short}"
             with get_conn(args.db_path) as conn:
                 conn.execute(
@@ -249,8 +327,14 @@ def main() -> None:
                     ),
                 )
             total += 1
-            print(f"  [ok] {dest.name} {w}x{h}{' +svg' if vector_path else ''}")
-            time.sleep(1)
+            print(f"  [ok] {dest.name} {w}x{h}{' +svg' if vector_path else ''} ({model_used})")
+
+    if args.concurrency > 1:
+        with ThreadPoolExecutor(max_workers=args.concurrency) as ex:
+            list(ex.map(process, tasks))
+    else:
+        for t in tasks:
+            process(t)
 
     client.close()
     print(f"\n[summary] generated={total} failed={failed}")
