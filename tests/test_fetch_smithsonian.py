@@ -9,9 +9,9 @@ from scripts.fetch_smithsonian import (
 
 
 def test_search_url_includes_unit_code():
-    url = search_url("FSG")
-    assert "FSG" in url
-    assert "openaccess/api/v1.0/content/FSG/search" in url
+    """Search endpoint is /api/v1.0/search (no unit prefix; filter via q)."""
+    url = search_url()
+    assert url == "https://api.si.edu/openaccess/api/v1.0/search"
 
 
 def test_normalize_record_extracts_image_and_title():

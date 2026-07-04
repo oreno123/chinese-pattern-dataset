@@ -36,25 +36,24 @@ class HttpClient:
         self.max_retries = max_retries
 
     def get_json(self, url: str, params: dict | None = None) -> dict:
-        return self._request("GET", url, params=params, json_resp=True)
+        resp = self._request("GET", url, params=params)
+        return resp.json()
 
     def download(self, url: str, dest: Any) -> int:
         """Stream-download binary content to a Path-like dest. Returns bytes written."""
-        resp = self._request("GET", url, json_resp=False)
+        resp = self._request("GET", url)
         data = resp.content
         with open(dest, "wb") as f:
             f.write(data)
         return len(data)
 
-    def _request(self, method: str, url: str, **kwargs) -> Any:
+    def _request(self, method: str, url: str, **kwargs) -> httpx.Response:
         last_exc: Exception | None = None
         for attempt in range(self.max_retries):
             self.rate_limiter.wait()
             try:
                 resp = self.client.request(method, url, **kwargs)
                 resp.raise_for_status()
-                if kwargs.get("json_resp", False):
-                    return resp.json()
                 return resp
             except httpx.HTTPStatusError as e:
                 last_exc = e
