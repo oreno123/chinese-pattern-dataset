@@ -38,12 +38,17 @@ PAINTING_KEYWORDS = [
     "calligraphy", "calligrap", "poem", "poetry",
     "scholar", "literati", "sage",
     "portrait", "figure painting", "figure on horseback", "lady by",
+    "standing figure", "seated figure", "figure of a",
+    "luohan", "arhat", "buddha", "bodhisattva", "attendant",
+    "monk", "priest", "immortal",
     # narrative scene markers (specific actions = paintings, not motifs)
     "awaiting", "ferry", "clearing snow", "under tree", "in landscape",
     "in reeds", "by the water", "water's edge", "orchid cliff",
-    # nature scenes
-    "magpies under", "ducks in", "ducks among", "ducks at",
-    "butterflies and", "birds and flowers",
+    # bird-and-flower / nature scenes
+    "magpies under", "ducks in", "ducks among", "ducks at", "mandarin ducks",
+    "butterflies and", "birds and flowers", "birds among", "birds in",
+    "quail", "peach branches", "flowering peach", "ears of grain",
+    "rocks and", "rocks,", "prunus", "chrysanthemum",
 ]
 
 
