@@ -49,6 +49,11 @@ PAINTING_KEYWORDS = [
     "butterflies and", "birds and flowers", "birds among", "birds in",
     "quail", "peach branches", "flowering peach", "ears of grain",
     "rocks and", "rocks,", "prunus", "chrysanthemum",
+    # narrative dragon/horse scenes (multi-animal in nature = painting, not motif)
+    "dragons in clouds", "dragons in waters", "dragons in the",
+    "dragons and clouds", "dragons and waters", "dragons and waves",
+    "dragons among", "dragon and clouds", "dragon among clouds",
+    "dragons contending", "nine dragons",
 ]
 
 
