@@ -30,8 +30,13 @@ DECORATIVE_KEYWORDS = [
 PAINTING_KEYWORDS = [
     "painting", "paintings", "scroll painting", "hanging scroll",
     "handscroll", "album leaf", "fan painting",
-    "landscape", "mountains and water",
-    "calligraphy",
+    "landscape", "mountains and water", "mountain", "river", "snow",
+    "calligraphy", "calligrap",
+    "scholar", "literati",
+    "portrait", "figure painting",
+    "awaiting", "magpies", "ducks", "horses", "birds in",
+    "clearing snow", "ferry", "orchid cliff",
+    "two magpies", "two ducks",
 ]
 
 

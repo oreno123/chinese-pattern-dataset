@@ -60,13 +60,30 @@ PROMPT_TEMPLATES = {
         "A traditional Chinese {zh} ({en}) decorative element, isolated on pure white background, "
         "blue-and-white porcelain cobalt-blue line-art style, single complete motif, "
         "intricate hand-drawn linework, symmetrical, Ming dynasty aesthetic, "
-        "no text, no watermark, no border, centered composition."
+        "no text, no watermark, no border, centered composition, NO color fill, line art only."
+    ),
+    "element-corner": (
+        "A traditional Chinese {zh} ({en}) corner ornament, L-shaped quarter-symmetry design, "
+        "fills the top-left corner of a square, mirror-symmetric along the diagonal, "
+        "blue-and-white porcelain cobalt-blue line-art on pure white background, "
+        "Ming dynasty aesthetic, NO color fill, line art only, no text."
+    ),
+    "element-filler": (
+        "A small traditional Chinese {zh} ({en}) filler motif, single small unit suitable for "
+        "tessellation, perfectly square composition, blue-and-white porcelain cobalt-blue "
+        "line-art on pure white background, simple but elegant, Ming dynasty aesthetic, "
+        "NO color fill, line art only, no text."
+    ),
+    "element-border": (
+        "A horizontal traditional Chinese {zh} ({en}) border strip, repeating along the long axis, "
+        "thin ribbon composition (height = 1/4 of width), blue-and-white porcelain cobalt-blue "
+        "line-art on pure white background, Ming dynasty aesthetic, NO color fill, line art only."
     ),
     "tile": (
         "A seamless repeating pattern of traditional Chinese {zh} ({en}), "
-        "blue-and-white porcelain cobalt-blue on warm cream paper background, "
+        "blue-and-white porcelain cobalt-blue line-art on warm cream paper background, "
         "intricate hand-drawn linework, museum textile catalog style, "
-        "fills entire frame edge-to-edge, Ming dynasty aesthetic, no text, no watermark."
+        "fills entire frame edge-to-edge, Ming dynasty aesthetic, line art only, no text."
     ),
     "hero": (
         "A museum-quality hero photograph of a traditional Chinese {zh} ({en}) on "
@@ -132,7 +149,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--purpose",
-        choices=["element", "tile", "hero"],
+        choices=["element", "element-corner", "element-filler", "element-border", "tile", "hero"],
         required=True,
     )
     parser.add_argument(
@@ -198,7 +215,7 @@ def main() -> None:
                 w, h = None, None
 
             vector_path = None
-            if args.vectorize and args.purpose == "element":
+            if args.vectorize and args.purpose.startswith("element"):
                 svg = dest.with_suffix(".svg")
                 v_ok, _ = png_to_svg(dest, svg, threshold=180)
                 if v_ok:
