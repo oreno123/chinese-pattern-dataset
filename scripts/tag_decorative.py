@@ -28,15 +28,22 @@ DECORATIVE_KEYWORDS = [
 
 # Keywords that signal "fine art painting" (reject)
 PAINTING_KEYWORDS = [
+    # explicit painting formats
     "painting", "paintings", "scroll painting", "hanging scroll",
     "handscroll", "album leaf", "fan painting",
-    "landscape", "mountains and water", "mountain", "river", "snow",
-    "calligraphy", "calligrap",
-    "scholar", "literati",
-    "portrait", "figure painting",
-    "awaiting", "magpies", "ducks", "horses", "birds in",
-    "clearing snow", "ferry", "orchid cliff",
-    "two magpies", "two ducks",
+    # landscapes
+    "landscape", "mountains and water", "mountain", "river", "lake",
+    "waterfall", "snowscape",
+    # figures & portraits
+    "calligraphy", "calligrap", "poem", "poetry",
+    "scholar", "literati", "sage",
+    "portrait", "figure painting", "figure on horseback", "lady by",
+    # narrative scene markers (specific actions = paintings, not motifs)
+    "awaiting", "ferry", "clearing snow", "under tree", "in landscape",
+    "in reeds", "by the water", "water's edge", "orchid cliff",
+    # nature scenes
+    "magpies under", "ducks in", "ducks among", "ducks at",
+    "butterflies and", "birds and flowers",
 ]
 
 

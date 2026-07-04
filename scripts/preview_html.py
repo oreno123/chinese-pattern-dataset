@@ -74,7 +74,7 @@ def main():
         for source_id, count in sources:
             rows = c.execute(
                 "SELECT pattern_id, title, file_path, dynasty, pattern_type, width_px, height_px, purpose, vector_path "
-                "FROM patterns WHERE source_id = ? ORDER BY RANDOM() LIMIT ?",
+                "FROM patterns WHERE source_id = ? AND review_status != 'rejected' ORDER BY RANDOM() LIMIT ?",
                 (source_id, PER_SOURCE),
             ).fetchall()
             body.append(f'<div class="section">')

@@ -253,6 +253,17 @@ def main() -> None:
         )
 
     # Build task list: (type_key, i, prompt, model_hint, dest)
+    # File naming: {type}-{purpose_short}-{NN}.png (no hash, human-readable)
+    PURPOSE_SHORT = {
+        "element": "standalone",
+        "element-corner": "corner",
+        "element-filler": "filler",
+        "element-border": "border",
+        "tile": "tile",
+        "hero": "hero",
+    }
+    short_purpose = PURPOSE_SHORT.get(args.purpose, args.purpose)
+
     tasks: list[tuple[str, int, str, str, Path]] = []
     for type_key in types:
         if type_key not in PATTERN_TYPES:
@@ -263,8 +274,10 @@ def main() -> None:
             template = templates[i % len(templates)]
             prompt = template.format(zh=zh, en=en)
             model_hint = MODELS[i % len(MODELS)] if not args.model else args.model
-            short = hashlib.md5(f"{type_key}-{i}-{time.time()}-{os.getpid()}".encode()).hexdigest()[:8]
-            dest = out_dir / f"{type_key}-{i:02d}-{short}.png"
+            dest = out_dir / f"{type_key}-{short_purpose}-{i:02d}.png"
+            # If exists, append pid-suffix to avoid clobber
+            if dest.exists():
+                dest = out_dir / f"{type_key}-{short_purpose}-{i:02d}-{os.getpid()%1000:03d}.png"
             tasks.append((type_key, i, prompt, model_hint, dest))
 
     import threading
@@ -298,8 +311,8 @@ def main() -> None:
                 v_ok, _ = png_to_svg(dest, svg, threshold=180)
                 if v_ok:
                     vector_path = str(svg.relative_to(DATASET_ROOT)).replace("\\", "/")
-            short = dest.stem.split("-")[-1]
-            pattern_id = f"ai-{args.purpose}-{type_key}-{i:02d}-{short}"
+            short = dest.stem  # e.g. "yun-standalone-00" or "yun-standalone-00-123"
+            pattern_id = f"ai-{args.purpose}-{short}"
             with get_conn(args.db_path) as conn:
                 conn.execute(
                     "INSERT OR IGNORE INTO patterns "
