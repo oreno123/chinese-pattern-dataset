@@ -54,6 +54,39 @@ PAINTING_KEYWORDS = [
     "dragons and clouds", "dragons and waters", "dragons and waves",
     "dragons among", "dragon and clouds", "dragon among clouds",
     "dragons contending", "nine dragons",
+    # single-subject nature studies = bird-and-flower paintings
+    "bird on", "bird and", "bird perched", "leafless branch",
+    "hollyhocks", "peonies,", "peonies and", "peonies in",
+    "peonies,", "lotuses and", "lotuses in",
+    "cabbage", "gourds", "grapes", " melon", "chestnut", "walnut",
+    "insects and", "cicada", "cricket", "grasshopper",
+    # figure scenes
+    "girl seated", "girl standing", "girl by", "boy on", "boy and",
+    "woman seated", "woman by", "woman holding", "woman reading",
+    "man seated", "man reading", "man standing",
+    "embroidery frame", "at a desk", "at a table", "at the window",
+    "weaving", "spinning", "sewing",
+    # landscape / marine
+    "royal barge", "barge at", "at sea", "boat on", "boats on",
+    "ship on", "ships at", "fleet",
+    "palace", "temple", "garden", "courtyard",
+    # bird-and-flower classic subjects
+    "pheasant", "kingfisher", "oriole", "egret",
+    # narrative / story subjects ( paintings of figures in action)
+    "parting from", "presenting tribute", "crossing the",
+    "enjoying a meal", "studious woodcutter", "under autumn",
+    "under a willow", "under a pine", "under trees", "under a tree",
+    "rider and", "rider on",
+    "taming the", "five pestilences", "zhong kui",
+    # single-animal nature studies
+    "water buffalo", "water-buffalo", "buffalo and",
+    "drake and", "drake in", "horse and groom",
+    "tatar,", "tatar and",
+    # single plant / still life
+    "eggplant", "birds and fruit", "birds and pines",
+    "a breath of spring", "scenic", "in a garden",
+    # religious narrative
+    "bodhidharma", "buddha,", "laozi",
 ]
 
 
